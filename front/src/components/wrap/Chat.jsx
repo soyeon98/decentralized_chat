@@ -25,7 +25,7 @@ const Chat = () => {
         // 닉네임 체크
         const checkNickname = () => {
             const nickname = sessionStorage.getItem('nick');
-            if (!nickname) {
+            if (!nickname||nickname==='') {
                 alert('채팅을 이용하기 위해서는 닉네임이 필요합니다.');
                 navigate('/');
                 return false;
@@ -42,6 +42,7 @@ const Chat = () => {
             try {
                 const currentNick = sessionStorage.getItem('nick');
                 if (currentNick) {
+                    // await axios.post('http://211.45.163.208:3000/api/node/nickOffline', {
                     await axios.post('http://localhost:3000/api/node/nickOffline', {
                         nickname: currentNick,
                         status: 'offline'
@@ -66,6 +67,7 @@ const Chat = () => {
 
     let nodeAddr = sessionStorage.getItem('nodeAddr')?sessionStorage.getItem('nodeAddr').replace("ws://", "http://"):'';
     const socket = io(nodeAddr); 
+    // const socketB = io('http://211.45.163.208:3000'); 
     const socketB = io('http://localhost:3000'); 
 
     const scrollToBottom = () => {
@@ -120,6 +122,7 @@ const Chat = () => {
         try {
             const currentNick = sessionStorage.getItem('nick');
             if (currentNick) {
+                // await axios.post('http://211.45.163.208:3000/api/node/nickOffline', {
                 await axios.post('http://localhost:3000/api/node/nickOffline', {
                     nickname: currentNick,
                     status: 'offline'
@@ -146,7 +149,8 @@ const Chat = () => {
     
         const handleTransaction = async () => {
             try {
-                const res = await axios.get(`${nodeAddr}/api/getChat`);
+                const oneMonthAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+                const res = await axios.get(`${nodeAddr}/api/getChatAfter/${oneMonthAgo}`);
                 setChatData(res.data);
             } catch (error) {
                 console.error("Error fetching chat data:", error);
@@ -166,7 +170,8 @@ const Chat = () => {
 
     const getChat = async () => {
         try {
-            const res = await axios.get(`${nodeAddr}/api/getChat`);
+            const oneMonthAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+            const res = await axios.get(`${nodeAddr}/api/getChatAfter/${oneMonthAgo}`);
             // timestamp 변환
             const formattedData = res.data.map(chat => ({
                 ...chat,
@@ -188,6 +193,7 @@ const Chat = () => {
             <div className="container">
                 <div className="gap">
                     <div className="title">
+                        <span className="connecting"><div></div>{user&&user.length}명 접속 중</span>
                         <h1>CHAT</h1>
                         <div className="btn">
                             <button onClick={handleExit}>채팅 종료</button> 

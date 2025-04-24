@@ -2,21 +2,32 @@
     width: 100%;
     max-width: 1000px;
     margin: 0 auto;
+    height: 100vh;
     .container{
         width: 100%;
-        padding: 30px 0 0 0;
+        height: 100%;
         .gap{
+            height: 100%;
             .title{
                 text-align: center;
-                padding: 30px 0;
+                // padding: 30px 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 15%;
+                .connecting{
+                    opacity: 0;
+                }
                 h1{
                     color: #333;
                     font-weight: 600;
                 }
                 .btn{
                     text-align: right;
-                    padding: 0 30px;
+                    margin: 0 30px 0 0;
+                    
                     button{
+                        transform: translateY(10px);
                         background: #333;
                         color: #fff;
                         padding: 10px 20px;
@@ -33,7 +44,8 @@
             }
             .content{
                 display: flex;    
-                padding: 15px 0 0 0;
+                // padding: 15px 0 0 0;
+                height: 85%;
                 .left{
                     width: 25%;
                     border-right: 1px solid #333;
@@ -45,7 +57,6 @@
                                 font-size: 16px;
                                 font-weight: 600;
                                 color: #333;
-                                padding: 5px 0;
                             }
                         }
                     }
@@ -53,14 +64,15 @@
                 .right {
                     width: 75%;
                     height: 100%;
-                    padding: 0 15px;
                     position: relative;                 
                     .msg {
                         width: 100%;
-                        height: 650px;
+                        // height: 650px;
+                        height: 85%;
                         overflow-y: auto;
                         display: flex;
                         flex-direction: column;
+                        padding: 0 15px;
                         .message-wrapper {
                             display: flex;
                             flex-direction: column;
@@ -83,7 +95,7 @@
                         }
                 
                         .id {
-                            width: 350px;
+                            width: 380px;
                             margin: 10px 15px;
                             font-weight: 600;
                             color: #333;
@@ -94,7 +106,7 @@
                             padding: 15px;
                             border: 1px solid #333;
                             border-radius: 5px;
-                            width: 350px;
+                            width: 380px;
                             p {
                                 line-height: 1.5;
                                 margin: 0;
@@ -109,13 +121,16 @@
                 
                     .input {
                         width: 100%; /* .right의 너비에 맞게 100%로 설정 */
-                        padding: 15px;
+                        height: 15%;
+                        padding: 0 15px;
                         background: white;
                         border-top: 1px solid #ddd;
-                
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
                         input {
-                            width: 84%;
-                            height: 45px;
+                            width: 82%;
+                            height: 50px;
                             padding: 0 15px;
                             outline: 0;
                             border: 1px solid #ddd;
@@ -123,8 +138,8 @@
                         }
                 
                         button {
-                            width: 15%;
-                            height: 45px;
+                            width: 17%;
+                            height: 50px;
                             margin-left: 1%;
                             border: none;
                             border-radius: 4px;

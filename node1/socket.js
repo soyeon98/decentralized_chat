@@ -7,6 +7,7 @@ const socketClient = require("socket.io-client");
 const fs = require('fs');
 const generateCustomId = require('./nodeId');
 const app = express();
+const axios=require('axios');
 
 // HTTP 서버 생성
 const server = http.createServer(app);
@@ -80,6 +81,7 @@ const start = async () => {
       }
     }
     // 부트스트랩 노드의 주소
+    // const bootstrapNodeAddress = 'ws://211.45.163.208:3000';
     const bootstrapNodeAddress = 'ws://localhost:3000';
 
     // 부트스트랩 노드와 연결 시도
@@ -141,6 +143,13 @@ const start = async () => {
             'address': currentAddress 
           });
         }
+        else{
+          peerSocket.emit('blockSync', { 
+            data: 0,
+            messageHash: null,
+            address: currentAddress 
+          });
+        }
       }
     }
 
@@ -191,14 +200,28 @@ const start = async () => {
       }
     }
 
+    const userTimeouts = {};
     // 새로운 클라이언트가 연결될 때마다 호출되는 콜백
     io.on("connection", (socket) => {
-      console.log('새로운 클라이언트 연결');
+      let nickname;
 
       socket.on("message", message => {
         console.log(`받은 메시지: ${message}`);
         // 받은 메시지를 모든 클라이언트에게 전송
         io.emit("message", message);
+      });
+
+      socket.on('newUser', async ({ nickname: userNick }) => {
+        nickname = userNick;
+        console.log(`${nickname} 접속`);
+    
+        await setUserOnline(nickname);
+    
+        // 이전에 설정된 타임아웃이 있다면 취소
+        if (userTimeouts[nickname]) {
+          clearTimeout(userTimeouts[nickname]);
+          delete userTimeouts[nickname];
+        }
       });
 
       socket.on("miner", message => {
@@ -281,8 +304,31 @@ const start = async () => {
         if (index !== -1) {
           connectedServers.splice(index, 1);
         }
-        console.log('연결 종료', connectedServers.length)
+        console.log('연결 종료', connectedServers.length);
+
+        if (!nickname) return;  // nickname이 없는 경우(예: 아직 설정 안 된 경우) 처리하지 않음
+  
+        // 일정 시간 후 진짜로 offline 처리
+        userTimeouts[nickname] = setTimeout(async () => {
+          console.log(`${nickname} offline 처리`);
+          await setUserOffline(nickname);  // DB에서 상태 offline으로 설정
+          delete userTimeouts[nickname];   // 타임아웃 제거
+        }, 60000);  // 예: 15초 뒤
       });
+
+      async function setUserOnline(nick) {
+        try {
+          await axios.post('http://localhost:3000/api/node/nick', { nickname: nick, nodeid: 'node1' });
+        } catch (error) {
+          console.error(`Error setting ${nick} online:`, error);
+        }      }
+      
+      async function setUserOffline(nick) {
+        try {
+          await axios.post('http://localhost:3000/api/node/nickOffline', { nickname: nick });
+        } catch (error) {
+          console.error(`Error setting ${nick} offline:`, error);
+        }      }
     });
 
   

@@ -318,7 +318,7 @@ const start = async () => {
 
       async function setUserOnline(nick) {
         try {
-          await axios.post('http://localhost:3000/api/node/nick', { nickname: nick, nodeid: 'node2' });
+          await axios.post('http://localhost:3000/api/node/nick', { nickname: nick, nodeid: 'node3' });
         } catch (error) {
           console.error(`Error setting ${nick} online:`, error);
         }      }

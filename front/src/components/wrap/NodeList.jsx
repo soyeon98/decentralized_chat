@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { io } from "socket.io-client";
 import axios from "axios";
 
+// const socket = io("http://211.45.163.208:3000"); 
 const socket = io("http://localhost:3000"); 
 
 const NodeList = () => {
@@ -29,6 +30,7 @@ const NodeList = () => {
 
     const onClickChat=async(e)=>{
         e.preventDefault();
+        const nodeSocket = io(sessionStorage.getItem('nodeAddr')?sessionStorage.getItem('nodeAddr').replace("ws://", "http://"):'');
         if(nick===''){
             alert('닉네임을 입력해주세요.');
         }
@@ -39,17 +41,21 @@ const NodeList = () => {
             }
             sessionStorage.setItem('nick',nick);
             try {
+                // const result = await axios.post('http://211.45.163.208:3000/api/node/nick',postData);
                 const result = await axios.post('http://localhost:3000/api/node/nick',postData);
                 console.log('result',result.data);
                 if(result.data===1||result.data===0){
-                    socket.emit('newUser');
+                    
+                    nodeSocket.emit('newUser',{nickname:nick});
                     window.location.href='/#/chat';
                 }
                 else if(result.data===-1){
                     alert('현재 사용 중인 닉네임입니다.');
+                    sessionStorage.setItem('nick','');
                 }
                 else{
                     alert('노드 시작 중 오류가 발생했습니다.');
+                    sessionStorage.setItem('nick','');
                 }
             } catch (error) {
                 console.log(error);
@@ -127,8 +133,9 @@ const NodeList = () => {
                         <div className="top"><button onClick={onClickModal}>X</button></div>
                         <div className="bottom">
                             <p>서버 : NODE{clickAddr}</p>
+                            <h5>사용할 닉네임을 입력해주세요.</h5>
                             <div className="start">
-                                <input type="text" placeholder="사용할 닉네임을 입력해주세요." onChange={onChangeNick}/>
+                                <input type="text" onChange={onChangeNick}/>
                                 <button onClick={onClickChat}>시작</button>
                             </div>
                         </div>

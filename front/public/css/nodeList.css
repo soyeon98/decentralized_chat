@@ -8,6 +8,9 @@
   margin: 0 auto;
   padding: 80px 0;
 }
+#nodeList .container .gap {
+  padding: 0 15px;
+}
 #nodeList .container .gap .title h1 {
   font-weight: 600;
   color: #333;
@@ -84,6 +87,9 @@
   color: #333;
   font-weight: 500;
   padding: 40px 0 10px 0;
+}
+#nodeList .modal .modal_container .bottom h5 {
+  font-size: 15px;
 }
 #nodeList .modal .modal_container .bottom .start {
   display: flex;
